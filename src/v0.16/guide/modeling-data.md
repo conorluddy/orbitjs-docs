@@ -125,28 +125,28 @@ the sources in an application.
 Schemas are defined with their initial settings as follows:
 
 ```javascript
-import { Schema } from "@orbit/data";
+import {Schema} from '@orbit/data';
 
 const schema = new Schema({
   models: {
     planet: {
       attributes: {
-        name: { type: "string" },
-        classification: { type: "string" }
+        name: {type: 'string'},
+        classification: {type: 'string'},
       },
       relationships: {
-        moons: { type: "hasMany", model: "moon", inverse: "planet" }
-      }
+        moons: {type: 'hasMany', model: 'moon', inverse: 'planet'},
+      },
     },
     moon: {
       attributes: {
-        name: { type: "string" }
+        name: {type: 'string'},
       },
       relationships: {
-        planet: { type: "hasOne", model: "planet", inverse: "moons" }
-      }
-    }
-  }
+        planet: {type: 'hasOne', model: 'planet', inverse: 'moons'},
+      },
+    },
+  },
 });
 ```
 
@@ -176,22 +176,58 @@ Here's an example of a schema definition that includes relationships with
 inverses:
 
 ```javascript
-import { Schema } from "@orbit/data";
+import {Schema} from '@orbit/data';
 
 const schema = new Schema({
   models: {
     planet: {
       relationships: {
-        moons: { type: "hasMany", model: "moon", inverse: "planet" }
-      }
+        moons: {type: 'hasMany', model: 'moon', inverse: 'planet'},
+      },
     },
     moon: {
       relationships: {
-        planet: { type: "hasOne", model: "planet", inverse: "moons" }
-      }
-    }
-  }
+        planet: {type: 'hasOne', model: 'planet', inverse: 'moons'},
+      },
+    },
+  },
 });
+```
+
+### Model pluralization and singularization
+
+By default, Orbit uses very simple "inflections", or pluralization/singularization
+of model names - e.g. `user <-> users`. Depending on your API, you may need to
+handle this yourself. A common error from same is where `countries` gets converted
+to `countrie`, as the `s` is chopped from it.
+
+You can override the Orbit inflectors via the Schema factory.
+
+```javascript
+new Schema({
+  models,
+  pluralize,
+  singularize,
+});
+```
+
+There are several inflection packages available on NPM, or you can keep it super
+simple for a small application and do something like the following, where a simple
+map containing your model names and their inflections can be kept up to date with
+your models.
+
+```javascript
+const inflect = {
+  country: 'countries',
+  countries: 'country',
+  ...
+}
+
+new Schema({
+  models,
+  pluralize: word => inflect[word],
+  singularize: word => inflect[word]
+})
 ```
 
 ### Model keys
@@ -207,12 +243,12 @@ empty options hash as follows:
 const schema = new Schema({
   models: {
     moon: {
-      keys: { remoteId: {} }
+      keys: {remoteId: {}},
     },
     planet: {
-      keys: { remoteId: {} }
-    }
-  }
+      keys: {remoteId: {}},
+    },
+  },
 });
 ```
 
@@ -232,23 +268,23 @@ is undefined. It may be extended to allow per-model defaults to be set as well.
 Here's an example that creates a schema and initializes a record:
 
 ```javascript
-import { Schema } from "@orbit/schema";
+import {Schema} from '@orbit/schema';
 
 const schema = new Schema({
   models: {
     planet: {
       attributes: {
-        name: { type: "string" }
-      }
-    }
-  }
+        name: {type: 'string'},
+      },
+    },
+  },
 });
 
 let earth = {
-  type: "planet",
+  type: 'planet',
   attributes: {
-    name: "Earth"
-  }
+    name: 'Earth',
+  },
 };
 
 schema.initializeRecord(earth);
@@ -270,6 +306,6 @@ let counter = 0;
 const schema = new Schema({
   generateId(type) {
     return counter++;
-  }
+  },
 });
 ```
